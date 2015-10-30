@@ -104,6 +104,7 @@ AC_ARG_WITH(cudapath,
     if test -d "$withval"; then
             CFLAGS="$CFLAGS -I$withval/include"
             have_cudainc=yes
+	    CUDA_ROOT=$withval
         else
             if test "x$withval" == "xyes"; then
                 echo "cuda path is empty."
@@ -179,6 +180,7 @@ AC_ARG_WITH(papi,
 	   		CFLAGS="$CFLAGS -I$withval/include"
 			LDFLAGS="$LDFLAGS -L$withval/lib -Wl,-rpath=$withval/lib"
 			LIBS="$LIBS -lpapi"
+			PAPI_ROOT=$withval
 			echo "papi: $withval"
 			enable_mod_papi=yes
 		else
@@ -289,6 +291,7 @@ test/test.allreduce/Makefile
 test/test.alltoall/Makefile
 test/test.alltoallv/Makefile
 test/test.bcast/Makefile
+test/test.cuda/Makefile
 test/test.fhello/Makefile
 test/test.forever/Makefile
 test/test.fork/Makefile

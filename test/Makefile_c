@@ -1,20 +1,22 @@
 
-IPM_ROOT  = $(shell pwd)/../..
-LIBIPM    = $(IPM_ROOT)/src/libipm.a
+#IPM_ROOT  = $(shell pwd)/../..
+IPM_ROOT  = $(top_srcdir)
+IPM_ROOT_BUILD  = $(top_builddir)
+LIBIPM    = $(IPM_ROOT_BUILD)/src/.libs/libipm.a
 
 include $(IPM_ROOT)/make_config
 
-ifneq ($(LINKWRAP), )
-      WRAP = $(shell cat $(IPM_ROOT)/linkwrap.txt)
-endif
+#ifneq ($(LINKWRAP), )
+WRAP = $(shell cat $(IPM_ROOT_BUILD)/linkwrap.txt)
+#endif
 
-ifeq ($(CCC), )
-  CCC=$(MPICC)
-endif
+# ifeq ($(CCC), )
+#   CCC=$(MPICC)
+# endif
 
-ifeq ($(SOURCE), )
-  CCC=$(MPICC)
-endif
+# ifeq ($(SOURCE), )
+#   CCC=$(MPICC)
+# endif
 
 PWD  = $(shell basename `pwd`)
 PAT  = $(shell echo -n $(PWD) )
@@ -25,13 +27,13 @@ all : $(PROG) $(PROG).ipm
 ipm : $(PROG).ipm
 
 $(PROG) : main.o 
-	$(CCC) $(LFLAGS) -o $@ $+ 
+	$(MPICC) $(LFLAGS) -o $@ $+ -L$(CUDA_ROOT)/lib64 -lcuda -lcudart $(EXTRA_CUDA_LDFLAGS)
 
 $(PROG).ipm : main.ipm.o $(LIBIPM) 
-	$(CCC) $(WRAP) -o $@ $+ $(LFLAGS)
+	$(MPICC) $(WRAP) -o $@ $+ $(LFLAGS) -L$(CUDA_ROOT)/lib64 -lcuda -lcudart $(EXTRA_CUDA_LDFLAGS)
 
 $(LIBIPM) : 
-	  make -C $(IPM_ROOT)/src/
+	  make -C $(IPM_ROOT_BUILD)/src/
 
 %.o : %.c
 	$(CCC) -c $(CFLAGS) -DUTEST -I$(IPM_ROOT)/include $+ 
@@ -39,8 +41,12 @@ $(LIBIPM) :
 %.ipm.o : %.c
 	$(CCC) -c $(CFLAGS) -o $@ -DIPM -DUTEST -I$(IPM_ROOT)/include $+ 
 
+%.ipm.o : %.cu
+	$(CCC) -c $(CFLAGS) -o $@ -DIPM -DUTEST -I$(IPM_ROOT)/include $+ 
+
 %.o : %.cu
 	$(CCC) -c $(CFLAGS) -DUTEST -I$(IPM_ROOT)/include $+ 
+
 
 clean : 
 	rm -f *.o *~

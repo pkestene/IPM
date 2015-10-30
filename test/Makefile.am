@@ -21,6 +21,9 @@ SUBDIRS = test.allgather \
 		  test.simple_mpi \
 		  test.status_ignore
 
+if ENABLE_CUDA
+	SUBDIRS += test.cuda
+endif
 
 dnl	  test.pomp-standalone  (sahu: disabled for now)
 

@@ -18,6 +18,7 @@ $PWD           = `pwd`; chomp $PWD;
 #$IPM_ROOT      =~ s!/?[^/]*/*$!!;
 #$IPM_ROOT      = $IPM_ROOT."/../";
 $IPM_ROOT      = "@top_srcdir@";
+$IPM_ROOT_BUILD= "@top_builddir@";
 
 $done = 0;
 while($done == 0) {
@@ -447,7 +448,7 @@ for( $i=0; $i<scalar(@template_f); $i++ ) {
 
 if( $DUMMIES ) {
     write_libipm("GEN.fake_${WRAP_WHAT}.c", ${WRAP_WHAT});
-    #write_linkertable("${IPM_ROOT}/linkwrap.txt");
+    write_linkertable("${IPM_ROOT_BUILD}/linkwrap.txt");
 } else {
     # in the event we're wrapping fortran MPI, generate wrappers separately
     if( $WRAP_FORTRAN && $WRAP_WHAT eq "mpi" ) {
